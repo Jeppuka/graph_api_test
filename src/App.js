@@ -1,25 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { VictoryChart, VictoryLine, VictoryTheme } from 'victory';
 
-function App() {
+const BitcoinPriceGraph = () => {
+  const [bitcoinPrices, setBitcoinPrices] = useState(null);
+
+  useEffect(() => {
+    const fetchBitcoinPrices = async () => {
+      const response = await fetch(
+        'https://api.coingecko.com/api/v3/coins/ethereum/market_chart?vs_currency=gbp&days=14'
+      );
+      const data = await response.json();
+      setBitcoinPrices(data.prices);
+    };
+
+    fetchBitcoinPrices();
+  }, []);
+
+  const transformData = (data) => {
+    return data.map((price) => ({
+      y: price[1],
+    }));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+      <div className="App">
+        <header className="App-header">
+          <div>
+            <h1>Price Graph (GBP)</h1>
+            {bitcoinPrices && (
+              <VictoryChart theme={VictoryTheme.material} style = {{fontSize: 2}}width={400} height={400}>
+                <VictoryLine data={transformData(bitcoinPrices)}style={{ data: {strokeWidth: 0.5} }} />
+              </VictoryChart>
+            )}
+          </div>
+        </header>
     </div>
   );
-}
+};
 
-export default App;
+export default BitcoinPriceGraph;
