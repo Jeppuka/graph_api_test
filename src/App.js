@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {VictoryChart,VictoryLine,VictoryTheme,VictoryAxis} from 'victory';
+import {VictoryChart,VictoryLine,VictoryTheme,VictoryAxis, VictoryVoronoiContainer, VictoryTooltip} from 'victory';
 import './App.css';
 
 const BitcoinPriceGraph = ({ ticker }) => {
@@ -32,6 +32,7 @@ const BitcoinPriceGraph = ({ ticker }) => {
           style={{
             axisLabel: { fontSize: 5 },
           }}
+          containerComponent={<VictoryVoronoiContainer />}
         >
 
           <VictoryAxis
@@ -41,7 +42,17 @@ const BitcoinPriceGraph = ({ ticker }) => {
               axisLabel: { padding: 40 },
             }}
           />
-          <VictoryLine data={transformData(bitcoinPrices) } style={{ data: { strokeWidth: 0.5} }} />
+          
+          <VictoryLine
+            data={transformData(bitcoinPrices)}
+            style={{ data: { strokeWidth: 0.5 } }}
+            labels={({ datum }) => `Price: ${datum.y.toFixed(4)}`}
+            labelComponent={
+              <VictoryTooltip
+                style={{ fontSize: 8 }}
+              />
+            }
+          />
         </VictoryChart>
       )}
     </div>
